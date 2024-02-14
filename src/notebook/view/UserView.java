@@ -3,6 +3,7 @@ package notebook.view;
 import notebook.controller.UserController;
 import notebook.model.User;
 import notebook.util.Commands;
+import notebook.util.UserValidator;
 
 import java.util.Scanner;
 
@@ -13,7 +14,7 @@ public class UserView {
         this.userController = userController;
     }
 
-    public void run(){
+    public void run() {
         Commands com;
 
         while (true) {
@@ -35,9 +36,16 @@ public class UserView {
                         throw new RuntimeException(e);
                     }
                     break;
+                case LIST:
+                    System.out.println(userController.readAll());
+                    break;
                 case UPDATE:
                     String userId = prompt("Enter user id: ");
                     userController.updateUser(userId, createUser());
+                    break;
+                case DELETE:
+                    String useId = prompt("Enter user id: ");
+                    userController.deleteUser(useId, createUser());
             }
         }
     }
@@ -49,9 +57,13 @@ public class UserView {
     }
 
     private User createUser() {
+
         String firstName = prompt("Имя: ");
         String lastName = prompt("Фамилия: ");
         String phone = prompt("Номер телефона: ");
-        return new User(firstName, lastName, phone);
+        UserValidator validator = new UserValidator();
+        User user = validator.validate(new User(firstName, lastName, phone));
+        return user;
+//        return new User(firstName, lastName, phone);
     }
 }
